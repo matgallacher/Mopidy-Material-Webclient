@@ -1,0 +1,30 @@
+﻿<div layout="row" layout-align="center center">
+    <md-progress-circular class="md-primary" md-mode="indeterminate" ng-if="loading"></md-progress-circular>
+    <md-card id="mod-now-playing-card" ng-if="playing" flex-gt-md="33" flex-offset-gt-md="33" flex>
+        <img ng-if="playing.album.images.length > 0" ng-src="{{ playing.album.images[playing.album.images.length - 1] }}" class="md-card-image" alt="{{ playing.name }}">
+        <md-card-content>
+            <h2 class="md-title">{{ playing.name }}</h2>
+            <h3 class="md-subhead" ng-if="playing.artists.length > 0">{{ playing.artists[0].name }}</h3>
+        </md-card-content>
+        <div class="md-actions" layout="row" layout-align="end center">
+            <md-button class="md-icon-button">
+                <md-icon>fast_rewind</md-icon>
+            </md-button>
+            <md-button class="md-icon-button" ng-if="state != 'playing'">
+                <md-icon>play_arrow</md-icon>
+            </md-button>
+            <md-button class="md-icon-button" ng-if="state == 'playing'">
+                <md-icon>pause</md-icon>
+            </md-button>
+            <md-button class="md-icon-button">
+                <md-icon>fast_forward</md-icon>
+            </md-button>
+            <md-button class="md-icon-button">
+                <md-icon class="fa" md-font-icon="fa-random"></md-icon>
+            </md-button>
+            <md-button class="md-icon-button">
+                <md-icon class="fa" md-font-icon="fa-repeat"></md-icon>
+            </md-button>
+        </div>
+    </md-card>
+</div>

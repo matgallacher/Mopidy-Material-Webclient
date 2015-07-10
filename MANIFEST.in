@@ -1,0 +1,9 @@
+include .coveragerc
+include .travis.yml
+include LICENSE
+include MANIFEST.in
+include README.rst
+include mopidy_material_webclient/ext.conf
+include tox.ini
+
+recursive-include tests *.py

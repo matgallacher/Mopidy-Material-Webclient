@@ -1,0 +1,46 @@
+﻿<div layout="column" flex layout-align="center center" ng-if="loading">
+    <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
+</div>
+<div layout-gt-md="row" layout="column">
+    <div flex-gt-md="33" ng-if="artistInfo">
+        <md-card>
+            <img class="md-card-image" ng-src="{{ artistInfo.image[artistInfo.image.length - 1]['#text'] }}" alt="{{ artistInfo.name }}" ng-if="artistInfo.image.length > 0" />
+            <md-card-content>
+                <h2 class="md-title">{{ artistInfo.name }}</h2>
+                <p ng-if="artistInfo.bio" ng-bind-html="asTrusted(artistInfo.bio.summary)"></p>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button id="play-all" class="md-icon-button md-primary" ng-click="playAll()">
+                    <md-icon>play_arrow</md-icon>
+                </md-button>
+            </div>
+        </md-card>
+    </div>
+    <div flex-gt-md="33" ng-if="albumInfo">
+        <md-card>
+            <img class="md-card-image" ng-src="{{ albumInfo.image[albumInfo.image.length - 1]['#text'] }}" alt="{{ albumInfo.name }}" ng-if="albumInfo.image.length > 0" />
+            <md-card-content>
+                <h2 class="md-title">{{ albumInfo.name }}</h2>
+                <h3 class="md-subhead">{{ albumInfo.artist }}</h3>
+                <p ng-if="albumInfo.wiki" ng-bind-html="asTrusted(albumInfo.wiki.summary)"></p>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button id="play-all" class="md-icon-button md-primary" ng-click="playAll()">
+                    <md-icon>play_arrow</md-icon>
+                </md-button>
+            </div>
+        </md-card>
+    </div>
+    <md-list ng-if="!loading && (content.length > 0)" flex>
+        <md-list-item ng-repeat="ref in content" ng-click="goTo(ref)">
+            <md-icon md-font-icon="{{ getFontIcon(ref) }}" class="fa md-list-icon-fa" ng-if="!ref.image"></md-icon>
+            <img class="md-avatar" ng-src="{{ ref.image }}" alt="{{ ref.name }}" ng-if="ref.image" />
+            <p>{{ ref.name }}</p>
+            <md-icon class="md-secondary" aria-label="More" ng-click="showTrackActions($event, ref)" ng-if="ref.type == 'track'">more_vert</md-icon>
+        </md-list-item>
+    </md-list>
+    <div ng-if="!loading && content.length == 0" flex>
+        <h4 class="md-title"><md-icon>warning</md-icon> Nothing to see here!</h4>
+        <p class="md-body2">You've reached the end of line, <md-button class="md-accent" ng-click="back()">back up a bit</md-button> and try somewhere else</p>
+    </div>
+</div>

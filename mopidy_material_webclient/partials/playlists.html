@@ -1,0 +1,30 @@
+﻿<div layout="row" layout-align="center center" ng-if="!content">
+    <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
+</div>
+<div<div layout="column" layout-gt-md="row" ng-if="content">
+    <div flex-gt-md="33" ng-if="playlist">
+        <md-card>
+            <div layout="row" layout-padding layout-wrap flex>
+                <div ng-repeat="image in images" flex="33">
+                    <img ng-src="{{ image }}" class="img-responsive" />
+                </div>
+            </div>
+            <md-card-content>
+                <h2 class="md-title">{{ playlist.name }}</h2>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button class="md-icon-button md-primary" ng-click="playAll()">
+                    <md-icon>play_arrow</md-icon>
+                </md-button>
+            </div>
+        </md-card>
+    </div>
+    <md-list flex>
+        <md-list-item ng-repeat="ref in content" ng-click="goTo(ref)">
+            <md-icon md-font-icon="{{ getFontIcon(ref) }}" class="fa md-list-icon-fa" ng-if="!ref.images || ref.images.length == 0"></md-icon>
+            <img class="md-avatar" ng-src="{{ ref.images[0].uri }}" alt="{{ ref.name }}" ng-if="ref.images && ref.images.length > 0" />
+            <p>{{ ref.name }}</p>
+        </md-list-item>
+    </md-list>
+</div>
+
