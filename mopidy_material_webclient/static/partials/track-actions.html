@@ -1,0 +1,28 @@
+﻿<md-bottom-sheet class="md-list md-has-header">
+    <md-list>
+        <md-list-item>
+            <md-button class="md-list-item-content" ng-click="listItemClick('play-next')">
+                <md-icon>play_circle_outline</md-icon>
+                <span class="md-inline-list-icon-label">Play next</span>
+            </md-button>
+        </md-list-item>
+        <md-list-item>
+            <md-button class="md-list-item-content" ng-click="listItemClick('add-to-queue')">
+                <md-icon>playlist_add</md-icon>
+                <span class="md-inline-list-icon-label">Add to queue</span>
+            </md-button>
+        </md-list-item>
+        <md-list-item ng-if="!isFavourite">
+            <md-button class="md-list-item-content" ng-click="listItemClick('add-to-favourites')">
+                <md-icon>star_border</md-icon>
+                <span class="md-inline-list-icon-label">Add to favourites</span>
+            </md-button>
+        </md-list-item>
+        <md-list-item ng-if="isFavourite">
+            <md-button class="md-list-item-content" ng-click="listItemClick('remove-from-favourites')">
+                <md-icon>star</md-icon>
+                <span class="md-inline-list-icon-label">Remove from favourites</span>
+            </md-button>
+        </md-list-item>
+    </md-list>
+</md-bottom-sheet>

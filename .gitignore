@@ -55,7 +55,3 @@ docs/_build/
 
 # PyBuilder
 target/
-
-# Visual studio stuff
-obj
-bin

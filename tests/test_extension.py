@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from mopidy_material-webclient import Extension, frontend as frontend_lib
+from mopidy_material_webclient import Extension, frontend as frontend_lib
 
 
 def test_get_default_config():

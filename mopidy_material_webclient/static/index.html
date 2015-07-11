@@ -1,0 +1,85 @@
+﻿<html lang="en" ng-app="MopidyApp">
+<head>
+    <link href="bower_components/angular-material/angular-material.min.css" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic" rel="stylesheet">
+    <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/app.min.css" rel="stylesheet">
+    <meta name="viewport" content="initial-scale=1">
+    <title>Mopidy</title>
+</head>
+<body ng-controller="AppCtrl" ng-cloak layout="column">
+    <div layout="row" flex layout-fill>
+        <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-lg')">
+            <img src="images/audio_mix.jpg" class="img-responsive" />
+            <md-list>
+                <md-list-item ng-click="goTo('/queue')">
+                    <md-icon>queue</md-icon>
+                    <p>Queue</p>
+                </md-list-item>
+                <md-list-item ng-click="goTo('/library')">
+                    <md-icon>library_music</md-icon>
+                    <p>Library</p>
+                </md-list-item>
+                <md-list-item ng-click="goTo('/playlists')">
+                    <md-icon>queue_music</md-icon>
+                    <p>Playlists</p>
+                </md-list-item>
+                <md-list-item ng-click="goTo('/settings')">
+                    <md-icon>settings</md-icon>
+                    <p>Settings</p>
+                </md-list-item>
+                <md-list-item>
+                    <md-icon>power_settings_new</md-icon>
+                    <p>System</p>
+                </md-list-item>
+            </md-list>
+        </md-sidenav>
+        <div layout="column" flex id="content" style="position: relative">
+            <md-toolbar layout="column" class="md-whiteframe-z2 {{ toolbar.height }}">
+                <div class="md-toolbar-tools" layout="row">
+                    <md-button ng-click="toolbar.toggleSidenav('left')" hide-gt-lg class="md-icon-button">
+                        <md-icon>menu</md-icon>
+                    </md-button>
+                    <span flex>Mopidy</span>
+                    <md-button class="md-icon-button" ng-click="toolbar.toggleSearch()">
+                        <md-icon>search</md-icon>
+                    </md-button>
+                </div>
+                <div class="md-toolbar-tools" ng-if="toolbar.showSearch">
+                    <form name="searchForm" flex ng-submit="toolbar.doSearch()">
+                        <md-input-container flex md-no-float>
+                            <input id="search-text" type="text" placeholder="Search barcodes" ng-model="toolbar.searchText" ng-blur="toolbar.toggleSearch(true)" />
+                        </md-input-container>
+                    </form>
+                </div>
+            </md-toolbar>
+            <md-content layout="column" flex> 
+                <div ng-view></div>
+            </md-content>
+            <md-toolbar layout="column" class="md-whiteframe-z4 md-accent" ng-if="nowPlaying && showNowPlaying">
+                <div class="md-toolbar-tools" layout="row">
+                    <img class="now-playing-avatar" ng-src="{{ nowPlaying.album.images[0] }}" alt="{{ nowPlaying.name }}" ng-if="nowPlaying.album.images.length > 0" />
+                    <span flex>{{ nowPlaying.name }} - {{ nowPlaying.artists[0].name }}</span>
+                    <md-button class="md-icon-button" ng-if="state != 'playing'" ng-click="play()">
+                        <md-icon>play_arrow</md-icon>
+                    </md-button>
+                    <md-button class="md-icon-button" ng-if="state == 'playing'" ng-click="pause()">
+                        <md-icon>pause</md-icon>
+                    </md-button>
+                </div>
+            </md-toolbar>
+        </div>
+    </div>
+    <!-- Angular Material Dependencies -->
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="bower_components/angular-material/angular-material.min.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="http://musicbox.local/mopidy/mopidy.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/services.js"></script>
+    <script src="scripts/controllers.js"></script>
+</body>
+</html>

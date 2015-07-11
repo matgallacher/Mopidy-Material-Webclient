@@ -1,0 +1,23 @@
+{
+  "name": "Mopidy Material WebClient",
+  "version": "0.1.0",
+  "authors": [
+    "Mat Gallacher <mat.gallacher@gmail.com>"
+  ],
+  "description": "A material flavored webclient for Mopidy",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-material": "~0.10.0",
+    "angular-route": "~1.4.1"
+  },
+  "resolutions": {
+    "angular": "^1.3.0 || >1.4.0-beta.0"
+  }
+}
