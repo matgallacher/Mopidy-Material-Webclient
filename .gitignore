@@ -58,3 +58,9 @@ target/
 *.suo
 *.suo
 *.pyproj
+
+# Visual studio 
+*.sln
+*.suo
+*.pyproj
+*.user
