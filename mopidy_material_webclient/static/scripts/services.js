@@ -2,14 +2,12 @@
 
 services.factory('mopidy', ['$q',
     function ($q) {
-        var mopidy = new Mopidy({
-            webSocketUrl: "ws://musicbox.local:6680/mopidy/ws/"
-        });
-        return $q(function (resolve, reject) {
-            mopidy.on("state:online", function () {
+        var mopidy = new Mopidy();
+        return $q(function(resolve, reject) {
+            mopidy.on("state:online", function() {
                 resolve(mopidy);
             });
-        })
+        });
     }]);
 
 services.factory('lastfm', [
