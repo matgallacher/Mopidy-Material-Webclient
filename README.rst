@@ -18,7 +18,11 @@ Mopidy-Material-Webclient
    :target: https://coveralls.io/r/matgallacher/mopidy-material-webclient?branch=master
    :alt: Test coverage
 
-Mopidy web client with a Material design feel
+A Mopidy web client with an Android Material design feel.
+
+This is a stripped down and slightly tarted up web front end for my own personal use and a few people I make retro radios into streaming music players for.  
+
+You won't see the wealth of settings that the brilliant `Mopidy Websettings <https://github.com/woutervanwijk/mopidy-websettings>` gives you because this was created for people with pre-installed systems who won't be making that level of change. Maybe I'll add in some meta settings to say which settings are accessible in a later update!
 
 
 Installation
@@ -50,6 +54,11 @@ Project resources
 - `Issue tracker <https://github.com/matgallacher/mopidy-material-webclient/issues>`_
 - `Development branch tarball <https://github.com/matgallacher/mopidy-material-webclient/archive/master.tar.gz#egg=Mopidy-Material-Webclient-dev>`_
 
+Thanks
+======
+
+- `Mopidy music server <http://mopidy.com>` which this is only a web front end for
+- A lot of the original code from the `Pi Musicbox <http://pimusicbox.com>` for settings and the orginal SD image I worked from
 
 Changelog
 =========
@@ -58,3 +67,7 @@ v0.1.0
 ----------------------------------------
 
 - Initial release.
+
+- Lots of unnecessary files still in there from Bower (I'll add grunt at some point to strip out the minified versions).
+- About and restart don't work at all.
+- Search produces results but you can't do anything with them.  I'm not happy with any of the search mechanic at the moment - so expect to see that entirely revamped.
