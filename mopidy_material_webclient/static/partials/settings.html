@@ -1,28 +1,27 @@
 ﻿<section>
-    <md-subheader class="md-accent"><md-icon>wifi</md-icon> Network</md-subheader>
+    <md-subheader class="md-primary"><md-icon>wifi</md-icon> Network</md-subheader>
     <div layout-padding>
-        <md-input-container>
-            <label for="network_wifi_network">Wifi Network Name</label>
-            <input type="text" name="network_wifi_network" ng-bind="{{ network_wifi_network }}" size="15" maxlength="40" />
-        </md-input-container>
+        <md-select ng-model="settings.network__wifi_network" placeholder="Select network">
+            <md-option ng-repeat="network in wifi track by $index" value="{{ network }}">{{ network }}</md-option>
+        </md-select>
         <md-input-container>
             <label for="network_wifi_password">Wifi Password</label>
-            <input type="password" name="network_wifi_password" ng-bind="{{ network_wifi_password }}" size="10" maxlength="40" />
+            <input type="text" name="network_wifi_password" ng-model="settings.network__wifi_password" size="10" maxlength="40" />
         </md-input-container>
         <p class="md-caption">Here you can change the default workgroup of the Windows network. This will set the workgroup to the name you want</p>
         <md-input-container>
             <label for="network_workgroup">Workgroup</label>
-            <input type="text" name="network_workgroup" ng-bind="{{ network_workgroup }}" size="15" maxlength="40" />
+            <input type="text" name="network_workgroup" ng-model="settings.network__workgroup" size="15" maxlength="40" />
         </md-input-container>
         <p class="md-caption">For security reasons, change the root password if you enable this.</p>
-        <md-switch ng-model="network_enable_ssh" aria-label="Enable SSH">
+        <md-switch ng-model="settings.network__enable_ssh" aria-label="Enable SSH">
             Enable SSH
         </md-switch>
         <md-divider></md-divider>
     </div>
 </section>
 <section>
-    <md-subheader class="md-accent"><md-icon>settings</md-icon> MusicBox</md-subheader>
+    <md-subheader class="md-primary"><md-icon>settings</md-icon> MusicBox</md-subheader>
     <div layout-padding>
         <p class="md-caption">
             Set the name of the MusicBox. In this way you can create different devices on the same network (in different rooms).
@@ -32,27 +31,27 @@
         </p>
         <md-input-container>
             <label for="network_name">Device name</label>
-            <input type="text" name="network_name" value="{{ network_name }}" size="12" maxlength="9" />
+            <input type="text" name="network_name" ng-model="settings.network__name" size="12" maxlength="9" />
         </md-input-container>
         <p class="md-caption">To secure your device, you can change the default password of root, the superuser.</p>
         <md-input-container>
             <label for="musicbox_root_password">Root password</label>
-            <input type="password" name="musicbox_root_password" value="{{ musicbox_root_password }}" size="15" maxlength="40" />
+            <input type="text" name="musicbox_root_password" ng-model="settings.musicbox__root_password" size="15" maxlength="40" />
         </md-input-container>
         <p class="md-caption">Enable streaming audio from iPhone, iPad, Mac, iPod using ShairPort (AirPlay) to MusicBox.</p>
-        <md-switch ng-model="musicbox_enable_shairport" aria-label="Enable Shairport">Enable Shairport</md-switch>
+        <md-switch ng-model="settings.musicbox__enable_shairport" aria-label="Enable Shairport">Enable Shairport</md-switch>
         <p class="md-caption">Enable streaming music to MusicBox using DLNA/uPnP/OpenHome.</p>
-        <md-switch ng-model="musicbox_enable_upnp" aria-label="DLNA/uPnP/OpenHome Streaming">DLNA/uPnP/OpenHome Streaming</md-switch>
+        <md-switch ng-model="settings.musicbox__enable_upnp" aria-label="DLNA/uPnP/OpenHome Streaming">DLNA/uPnP/OpenHome Streaming</md-switch>
     </div>
 </section>
 <section>
-    <md-subheader class="md-accent"><md-icon>music_note</md-icon> Music files</md-subheader>
+    <md-subheader class="md-primary"><md-icon>music_note</md-icon> Music files</md-subheader>
     <div layout-padding>
         <p class="md-caption">
             Use this setting to let Mopidy/MusicBox scan on startup for new music files on the SD Card, USB or the Network. This could take a while!
             This can slowdown the boot a lot. Disable it again if your music doesn't change.
         </p>
-        <md-switch ng-model="musicbox_scan_always" aria-label="Scan always">Scan always</md-switch>
+        <md-switch ng-model="settings.musicbox__scan_always" aria-label="Scan always">Scan always</md-switch>
         <p class="md-caption">
             Mount Windows Network Drive on boot. Type the address exactly like this (samba mount): //servername/mountpoint/directory e.g. //192.168.1.5/musicmount
             or //server.local/shared/music<br />
@@ -61,62 +60,65 @@
         </p>
         <md-input-container>
             <label for="network_mount_address">Network mount address</label>
-            <input type="text" name="network_mount_address" value="{{ network_mount_address }}" size="12" maxlength="9" />
+            <input type="text" name="network_mount_address" ng-model="settings.network__mount_address" size="12" maxlength="9" />
         </md-input-container>
         <md-input-container>
             <label for="network_mount_user">Network mount user</label>
-            <input type="text" name="network_mount_user" value="{{ network_mount_user }}" size="12" maxlength="9" />
+            <input type="text" name="network_mount_user" ng-model="settings.network__mount_user" size="12" maxlength="9" />
         </md-input-container>
         <md-input-container>
             <label for="network_mount_password">Network mount password</label>
-            <input type="text" name="network_mount_password" value="{{ network_mount_password }}" size="12" maxlength="9" />
+            <input type="text" name="network_mount_password" ng-model="settings.network__mount_password" size="12" maxlength="9" />
         </md-input-container>
         <p class="md-caption">
             Enable this to let MusicBox automatically resize the filesystem of your SD Card, so the system uses all the space of your card. Recommended
             because otherwise the card might fill up. This is beta, you can lose data on your card if you enable this!! (If so, you can put the original
             MusicBox image on it again and start over)
         </p>
-        <md-switch ng-model="musicbox_resize_once" aria-label="Resize once">Resize once</md-switch>
+        <md-switch ng-model="settings.musicbox__resize_once" aria-label="Resize once">Resize once</md-switch>
     </div>
 </section>
 <h2 class="md-title" layout-padding>Services</h2>
 <section>
-    <md-subheader class="md-accent"><md-icon class="fa" md-font-icon="fa-spotify"></md-icon> Spotify</md-subheader>
+    <md-subheader class="md-primary"><md-icon class="fa" md-font-icon="fa-headphones"></md-icon> TuneIn</md-subheader>
     <div layout-padding>
-        <md-switch ng-model="musicbox_spotify_enabled" aria-label="Enabled">Enabled</md-switch>
+        <md-switch ng-model="settings.tunein__enabled" aria-label="Enabled">Enabled</md-switch>
+    </div>
+</section>
+<section>
+    <md-subheader class="md-primary"><md-icon class="fa" md-font-icon="fa-rss"></md-icon> Podcasts</md-subheader>
+    <div layout-padding>
+        <md-switch ng-model="settings.podcast__enabled" aria-label="Enabled">Enabled</md-switch>
+    </div>
+</section>
+<section>
+    <md-subheader class="md-primary"><md-icon class="fa" md-font-icon="fa-spotify"></md-icon> Spotify</md-subheader>
+    <div layout-padding>
+        <md-switch ng-model="settings.spotify__enabled" aria-label="Enabled">Enabled</md-switch>
         <md-input-container>
             <label>Username</label>
-            <input type="text" name="musicbox_spotify_username" />
+            <input type="text" name="spotify__username" ng-model="settings.musicbox__spotify_username" />
         </md-input-container>
         <md-input-container>
             <label>Password</label>
-            <input type="password" name="musicbox_spotify_password" />
+            <input type="text" name="spotify__password" ng-model="settings.musicbox__spotify_password" />
         </md-input-container>
     </div>
 </section>
 <section>
-    <md-subheader class="md-accent"><md-icon class="fa" md-font-icon="fa-soundcloud"></md-icon> Soundcloud</md-subheader>
+    <md-subheader class="md-primary"><md-icon class="fa" md-font-icon="fa-soundcloud"></md-icon> Soundcloud</md-subheader>
     <div layout-padding>
-        <md-switch ng-model="musicbox_soundcloud_enabled" aria-label="Enabled">Enabled</md-switch>
+        <md-switch ng-model="settings.soundcloud__enabled" aria-label="Enabled">Enabled</md-switch>
         <p class="md-caption">
             If you want to use SoundCloud, you must first authenticate your installation to access your SoundCloud account. To do that,
             go to <a href="http://www.mopidy.com/authenticate" target="_blank">http://www.mopidy.com/authenticate</a>
         </p>
         <md-input-container>
             <label>Token</label>
-            <input type="text" name="musicbox_soundcloud_token"/>
+            <input type="text" name="soundcloud_auth_token" ng-model="settings.soundcloud__auth_token" />
         </md-input-container>
     </div>
 </section>
-<section>
-    <md-subheader class="md-accent"><md-icon class="fa" md-font-icon="fa-headphones"></md-icon> TuneIn</md-subheader>
-    <div layout-padding>
-        <md-switch ng-model="musicbox_tunein_enabled" aria-label="Enabled">Enabled</md-switch>
-    </div>
-</section>
-<section>
-    <md-subheader class="md-accent"><md-icon class="fa" md-font-icon="fa-rss"></md-icon> Podcasts</md-subheader>
-    <div layout-padding>
-        <md-switch ng-model="musicbox_podcasts_enabled" aria-label="Enabled">Enabled</md-switch>
-    </div>
-</section>
+<md-button ng-click="save()" class="md-raised md-accent">
+    Save and restart
+</md-button>

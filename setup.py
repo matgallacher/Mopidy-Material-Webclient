@@ -27,6 +27,7 @@ setup(
         'setuptools',
         'Mopidy >= 1.0',
         'Pykka >= 1.1',
+        'wifi >= 0.3.4'
     ],
     entry_points={
         'mopidy.ext': [

@@ -39,7 +39,8 @@ Before starting Mopidy, you must add configuration for
 Mopidy-Material-Webclient to your Mopidy configuration file::
 
     [material-webclient]
-    # TODO: Add example of extension config
+	enabled = true
+	config_file = /etc/mopidy/mopidy.conf
 
 
 Project resources
@@ -53,7 +54,7 @@ Project resources
 Changelog
 =========
 
-v0.1.0 (UNRELEASED)
+v0.1.0
 ----------------------------------------
 
 - Initial release.

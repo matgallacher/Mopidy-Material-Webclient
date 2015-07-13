@@ -1,8 +1,8 @@
 ﻿var controllers = angular.module('mopControllers', []);
 
 controllers.controller('AppCtrl', [
-    '$scope', '$mdSidenav', '$location', 'mopidy', 'lastfm',
-    function ($scope, $mdSidenav, $location, mopidy, lastfm) {
+    '$scope', '$mdSidenav', '$mdDialog', '$location', 'mopidy', 'lastfm',
+    function ($scope, $mdSidenav, $mdDialog, $location, mopidy, lastfm) {
         mopidy.then(function (m) {
             m.playback.getCurrentTrack()
                 .done(function (track) {
@@ -113,6 +113,41 @@ controllers.controller('AppCtrl', [
             if (search) {
                 $location.path('search/' + encodeURIComponent(search));
             }
+        };
+
+        $scope.system = function ($event) {
+
+            function DialogController($scope, $mdDialog) {
+                $scope.action = function(value) {
+                    $mdDialog.hide(value);
+                }
+                $scope.closeDialog = function () {
+                    $mdDialog.cancel();
+                }
+            };
+
+            $mdDialog.show({
+                targetEvent: $event,
+                template:
+                    '<md-dialog aria-label="List dialog">' +
+                    '  <md-dialog-content>' +
+                    '    <md-list>' +
+                    '      <md-list-item ng-click="action(\'restart\')">' +
+                    '        <md-icon class="md-accent">refresh</md-icon><p>Restart</p>' +
+                    '      </md-list-item>' +
+                    '      <md-list-item ng-click="action(\'restart\')">' +
+                    '        <md-icon class="md-accent">info</md-icon><p>About</p>' +
+                    '      </md-list-item>' +
+                    '      <md-list-item ng-click="action(\'restart\')">' +
+                    '        <md-icon>cancel</md-icon><p>Cancel</p>' +
+                    '      </md-list-item>' +
+                    '    </md-list>' +
+                    '  </md-dialog-content>' +
+                    '</md-dialog>',
+                controller: DialogController
+            }).success(function(response) {
+                console.log(response);
+            });
         };
     }
 ]);
@@ -686,8 +721,48 @@ controllers.controller('SearchCtrl', [
 ]);
 
 controllers.controller('SettingsCtrl', [
-    '$scope', 'mopidy',
-    function ($scope, mopidy) {
+    '$scope', '$http', 'mopidy',
+    function ($scope, $http, mopidy) {
+        $http.get('settings').success(function (settings) {
+            console.log(settings);
+            for (var key in settings) {
+                var value = settings[key];
+                if (value == 'true') {
+                    settings[key] = true;
+                }
+                $scope.settings = settings;
+                $scope.wifi = $scope.wifi ? $scope.wifi : [];
+            }
+            if ($scope.wifi.indexOf(settings.network__wifi_network) < 0) {
+                $scope.wifi.push(settings.network__wifi_network);
+            }
+        });
+
+        $http.get('wifi').success(function (networks) {
+            $scope.wifi = $scope.wifi ? $scope.wifi : [];
+            for (var i = 0; i < networks.length; i++) {
+                if ($scope.wifi.indexOf(networks[i].ssid) < 0) {
+                    $scope.wifi.push(networks[i].ssid);
+                }
+            }
+        });
+
+        $scope.save = function () {
+            $http({
+                method: 'POST',
+                url: 'settings',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                transformRequest: function (obj) {
+                    var str = [];
+                    for (var p in obj)
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    return str.join("&");
+                },
+                data: $scope.settings
+            }).success(function (response) {
+                console.log(response);
+            });
+        };
     }
 ]);
 

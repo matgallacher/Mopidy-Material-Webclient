@@ -704,7 +704,6 @@
     <Content Include="tox.ini" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="mopidy_material_webclient\web.py" />
     <Compile Include="mopidy_material_webclient\__init__.py" />
     <Compile Include="setup.py" />
     <Compile Include="tests\test_extension.py" />

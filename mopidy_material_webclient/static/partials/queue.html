@@ -1,9 +1,11 @@
-﻿<div layout="row" layout-align="center center" ng-if="!tracks">
+﻿<div layout="row" layout-align="center center" ng-if="!tracks" layout-padding>
     <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
 </div>
-
-
-<div layout-gt-md="row" layout="column">
+<div ng-if="tracks.length == 0" layout-padding>
+    <h2 class="md-title">Nothing to see here!</h2>
+    <p>Browse your <a class="md-button md-accent" href="#/library">library</a> or one of your <a class="md-button md-accent" href="#/playlists">playlists</a> for some inspiration</p>
+</div>
+<div layout-gt-md="row" layout="column" ng-if="tracks.length > 0">
     <div flex-gt-md="33" flex>
         <md-card id="mod-now-playing-card" ng-if="playing">
             <img ng-if="playing.track.album.images.length > 0" ng-src="{{ playing.track.album.images[playing.track.album.images.length - 1] }}" class="md-card-image" alt="{{ playing.track.name }}">

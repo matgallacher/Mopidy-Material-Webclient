@@ -2,8 +2,8 @@
 
 app.config(function($mdThemingProvider) {
     $mdThemingProvider.theme('default')
-        .primaryPalette('red')
-        .accentPalette('light-blue');
+        .primaryPalette('deep-purple')
+        .accentPalette('pink');
 });
 
 
