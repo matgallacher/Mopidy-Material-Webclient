@@ -118,7 +118,7 @@ controllers.controller('AppCtrl', [
         $scope.system = function ($event) {
 
             function DialogController($scope, $mdDialog) {
-                $scope.action = function(value) {
+                $scope.action = function (value) {
                     $mdDialog.hide(value);
                 }
                 $scope.closeDialog = function () {
@@ -145,7 +145,7 @@ controllers.controller('AppCtrl', [
                     '  </md-dialog-content>' +
                     '</md-dialog>',
                 controller: DialogController
-            }).success(function(response) {
+            }).success(function (response) {
                 console.log(response);
             });
         };
@@ -627,19 +627,19 @@ controllers.controller('QueueCtrl', [
 controllers.controller('SearchCtrl', [
     '$scope', '$routeParams', '$location', 'mopidy',
     function ($scope, $routeParams, $location, mopidy) {
+
+        $scope.albums = [];
+        $scope.albumsLoading = true;
+        $scope.artists = [];
+        $scope.artistsLoading = true;
+        $scope.tracks = [];
+        $scope.tracksLoading = true;
+
         var query = decodeURIComponent($routeParams.query);
         mopidy.then(function (m) {
             m.library.search({
                 'any': query
             }).then(function (results) {
-
-                $scope.albums = [];
-                $scope.albumsLoading = true;
-                $scope.artists = [];
-                $scope.artistsLoading = true;
-                $scope.tracks = [];
-                $scope.tracksLoading = true;
-                var uris = [];
 
                 for (var i = 0; i < results.length; i++) {
                     var library = results[i];
@@ -658,27 +658,13 @@ controllers.controller('SearchCtrl', [
                                 $scope.artists.push(library.artists[j]);
                             }
                         }
-                    });
 
-                    if (library.tracks) {
-                        for (var j = 0; j < library.tracks.length; j++) {
-                            uris.push(library.tracks[j].uri);
-                            $scope.tracks.push(library.tracks[j]);
-                        }
-                    }
-                }
-
-                if (uris.length > 0) {
-                    m.library.lookup(null, uris).then(function (tracks) {
-                        $scope.$apply(function () {
-                            $scope.tracksLoading = false;
-                            for (var i = 0; i < $scope.tracks.length; i++) {
-                                var uri = $scope.tracks[i].uri;
-                                if (tracks[uri].length > 0) {
-                                    $scope.tracks[i] = tracks[uri][0];
-                                }
+                        $scope.tracksLoading = false;
+                        if (library.tracks) {
+                            for (var j = 0; j < library.tracks.length; j++) {
+                                $scope.tracks.push(library.tracks[j]);
                             }
-                        });
+                        }
                     });
                 }
 
@@ -686,32 +672,14 @@ controllers.controller('SearchCtrl', [
             });
         });
 
-        $scope.getFontIcon = function (ref) {
-            if (ref.type.toLowerCase() == 'track') {
-                return 'fa-music';
-            } else {
-                if (ref.uri.indexOf('spotify') == 0) {
-                    return 'fa-spotify';
-                }
-                if (ref.uri.indexOf('tunein:') == 0) {
-                    return 'fa-headphones';
-                }
-                if (ref.uri.indexOf('podcast') == 0) {
-                    return 'fa-rss';
-                } else {
-                    return 'fa-folder-o';
-                }
-            }
+        $scope.goto = function (type, uri) {
+            $location.path('library/' + type + '/' + encodeURIComponent(uri));
         }
 
-        $scope.goTo = function (uri) {
-            $location.path('library/' + encodeURIComponent(uri));
-        }
-
-        $scope.play = function (uri) {
+        $scope.play = function (track) {
             mopidy.then(function (m) {
                 m.tracklist.clear();
-                m.tracklist.add(null, null, uri)
+                m.tracklist.add(null, null, null, [track.uri])
                     .then(function () {
                         m.playback.play();
                     });

@@ -39,7 +39,7 @@
             <md-icon class="md-secondary" aria-label="More" ng-click="showTrackActions($event, ref)" ng-if="ref.type == 'track'">more_vert</md-icon>
         </md-list-item>
     </md-list>
-    <div ng-if="!loading && content.length == 0" flex>
+    <div ng-if="!loading && content.length == 0" flex layout-padding>
         <h4 class="md-title"><md-icon>warning</md-icon> Nothing to see here!</h4>
         <p class="md-body2">You've reached the end of line, <md-button class="md-accent" ng-click="back()">back up a bit</md-button> and try somewhere else</p>
     </div>

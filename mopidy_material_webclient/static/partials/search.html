@@ -1,34 +1,32 @@
 ﻿<md-list>
     <md-subheader>Albums</md-subheader>
-    <md-list-item ng-repeat="album in albums" ng-click="goTo(album.uri)">
-        <md-icon md-font-icon="{{ getFontIcon(album) }}" class="fa md-list-icon-fa" ng-if="!album.album || album.album.images.length == 0"></md-icon>
-        <img class="md-avatar" ng-src="{{ album.album.images[0] }}" alt="{{ album.name }}" ng-if="album.album.images && album.album.images.length > 0" />
-        <p>{{ album.name }}</p>
+    <div layout="row" layout-align="center center" layout-padding ng-if="albumsLoading">
+        <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
+    </div>
+    <md-list-item class="md-2-line" ng-repeat="album in albums track by $index" ng-click="goto('album', album.uri)">
+        <md-icon>album</md-icon>
+        <div class="md-list-item-text">
+            <h3>{{ album.name }}</h3>
+            <p>{{ album.artists[0].name }}</p>
+        </div>
     </md-list-item>
-    <div layout="row" layout-align="center center" ng-if="albumsLoading">
-        <md-progress-circular class="md-primary" md-mode="indeterminate" ng-if="!playing"></md-progress-circular>
-    </div>
     <md-subheader>Artists</md-subheader>
-    <div layout="row" layout-align="center center" ng-if="artistsLoading">
-        <md-progress-circular class="md-primary" md-mode="indeterminate" ng-if="!playing"></md-progress-circular>
+    <div layout="row" layout-align="center center" layout-padding ng-if="artistsLoading">
+        <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
     </div>
-    <md-list-item ng-repeat="artist in artists" ng-click="goTo(artist.uri)">
-        <md-icon md-font-icon="{{ getFontIcon(artist) }}" class="fa md-list-icon-fa" ng-if="!artist.artist || artist.artist.images.length == 0"></md-icon>
-        <img class="md-avatar" ng-src="{{ artist.artist.images[0] }}" alt="{{ artist.name }}" ng-if="artist.artist.images && artist.artist.images.length > 0" />
+    <md-list-item ng-repeat="artist in artists track by $index" ng-click="goto('artist', artist.uri)">
+        <md-icon>person</md-icon>
         <p>{{ artist.name }}</p>
     </md-list-item>
     <md-subheader>Tracks</md-subheader>
-    <div layout="row" layout-align="center center" ng-if="tracksLoading">
-        <md-progress-circular class="md-primary" md-mode="indeterminate" ng-if="!playing"></md-progress-circular>
+    <div layout="row" layout-align="center center" layout-padding ng-if="tracksLoading">
+        <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
     </div>
-    <md-list-item ng-repeat="t in tracks track by $index" ng-click="play(t.uri)" class="md-3-line">
-        <md-icon md-font-icon="{{ getFontIcon(t) }}" class="fa md-list-icon-fa" ng-if="!t.album || t.album.images.length == 0"></md-icon>
-        <img class="md-avatar" ng-src="{{ t.album.images[0] }}" alt="{{ t.name }}" ng-if="t.album.images && t.album.images.length > 0" />
+    <md-list-item class="md-2-line" ng-repeat="track in tracks track by $index" ng-click="play(track)">
+        <md-icon>music_note</md-icon>
         <div class="md-list-item-text">
-            <h3>{{ t.name }}</h3>
-            <h4>{{ t.artists[0].name }}</h4>
-            <p ng-if="t.comment">{{ t.comment }}</p>
-            <p ng-if="!t.comment">{{ t.album.name }}</p>
+            <h3>{{ track.name }}</h3>
+            <p>{{ track.artists[0].name }}</p>
         </div>
     </md-list-item>
 </md-list>
