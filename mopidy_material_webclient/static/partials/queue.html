@@ -14,20 +14,47 @@
                 <h3 class="md-subhead" ng-if="playing.artists.length > 0">{{ playing.track.artists[0].name }}</h3>
             </md-card-content>
             <div class="md-actions" layout="row" layout-align="end center">
-                <md-button class="md-accent" ng-click="save($event)" ng-if="tracks.length > 0">
-                    Save queue
-                </md-button>
+                <md-menu>
+                    <md-button aria-label="More things" class="md-icon-button" ng-click="$mdOpenMenu()">
+                        <md-icon>more_vert</md-icon>
+                    </md-button>
+                    <md-menu-content width="4">
+                        <md-menu-item>
+                            <md-button class="md-primary" ng-click="toggleRandom()" ng-class="randomOn ? 'md-accent' : ''">
+                                <md-icon class="fa" md-font-icon="fa-random"></md-icon>
+                                Random
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button class="md-primary" ng-click="toggleRepeat()" ng-class="repeatOn ? 'md-accent' : ''">
+                                <md-icon class="fa" md-font-icon="fa-repeat"></md-icon>
+                                Repeat
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-divider></md-menu-divider>
+                        <md-menu-item>
+                            <md-button class="md-accent" ng-click="save($event)">
+                                <md-icon>save</md-icon>
+                                Save queue
+                            </md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button class="md-accent" ng-click="clear()">
+                                <md-icon>clear</md-icon>
+                                Clear queue
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
                 <md-button class="md-primary md-icon-button" ng-click="previous()">
                     <md-icon>fast_rewind</md-icon>
                 </md-button>
+                <md-button class="md-primary md-icon-button" ng-click="play()">
+                    <md-icon class="md-accent" ng-if="state == 'playing'">play_arrow</md-icon>
+                    <md-icon class="md-accent" ng-if="state != 'playing'">pause</md-icon>
+                </md-button>
                 <md-button class="md-primary md-icon-button" ng-click="next()">
                     <md-icon>fast_forward</md-icon>
-                </md-button>
-                <md-button class="md-primary md-icon-button" ng-click="toggleRandom()" ng-class="randomOn ? 'md-accent' : ''">
-                    <md-icon class="fa" md-font-icon="fa-random"></md-icon>
-                </md-button>
-                <md-button class="md-primary md-icon-button" ng-click="toggleRepeat()" ng-class="repeatOn ? 'md-accent' : ''">
-                    <md-icon class="fa" md-font-icon="fa-repeat"></md-icon>
                 </md-button>
             </div>
         </md-card>
@@ -42,6 +69,7 @@
                 <p ng-if="track.comment">{{ t.track.comment }}</p>
                 <p ng-if="!track.comment">{{ t.track.album.name }}</p>
             </div>
+            <md-icon class="md-secondary" aria-label="Remove" ng-click="remove(t)">clear</md-icon>
         </md-list-item>
     </md-list>
 </div>

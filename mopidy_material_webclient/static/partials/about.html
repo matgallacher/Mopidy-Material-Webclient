@@ -1,0 +1,35 @@
+﻿<section>
+    <md-subheader class="md-primary">About</md-subheader>
+    <div layout="column" flex layout-align="center center" layout-padding ng-if="loading">
+        <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
+    </div>
+    <md-list>
+        <md-list-item class="md-2-line" ng-repeat="(name, info) in extensions" ng-click="update(name)">
+            <md-icon ng-if="info.latest">file_download</md-icon>
+            <div class="md-list-item-text" ng-class="{'md-offset': !info.latest }">
+                <h3>{{ name }}</h3>
+                <p ng-if="info.current">{{ info.current }}<span ng-if="info.latest"> <i class="fa fa-chevron-right" layout-padding></i> {{ info.latest }}</span></p>
+            </div>
+        </md-list-item>
+    </md-list>
+    <md-button class="md-accent md-raised" ng-click="checkForUpdates()">
+        Check for updates
+    </md-button>
+</section>
+<section>
+    <md-subheader class="md-primary">Thanks</md-subheader>
+    <md-list>
+        <md-list-item class="md-2-line">
+            <div class="md-list-item-text">
+                <h3>Mopidy</h3>
+                <p>An extensible music server written in Python.</p>
+            </div>
+        </md-list-item>
+        <md-list-item class="md-2-line">
+            <div class="md-list-item-text">
+                <h3>Pi Musicbox</h3>
+                <p>The Swiss Army knife of streamng music.</p>
+            </div>
+        </md-list-item>
+    </md-list>
+</section>

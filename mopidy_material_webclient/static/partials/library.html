@@ -32,6 +32,14 @@
         </md-card>
     </div>
     <md-list ng-if="!loading && (content.length > 0)" flex>
+        <div id="search-library" class="md-whiteframe-z3" ng-if="uri">
+            <form ng-submit="search(uri, query)">
+                <md-input-container md-no-float>
+                    <md-icon>search</md-icon>
+                    <input ng-model="query" type="text" placeholder="Search">
+                </md-input-container>
+            </form>
+        </div>
         <md-list-item ng-repeat="ref in content" ng-click="goTo(ref)">
             <md-icon md-font-icon="{{ getFontIcon(ref) }}" class="fa md-list-icon-fa" ng-if="!ref.image"></md-icon>
             <img class="md-avatar" ng-src="{{ ref.image }}" alt="{{ ref.name }}" ng-if="ref.image" />

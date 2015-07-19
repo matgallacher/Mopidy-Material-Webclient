@@ -6,6 +6,7 @@ import os
 import string
 import json
 import tornado.web
+import subprocess
 
 from configobj import ConfigObj, ConfigObjError
 from validate import Validator
@@ -13,7 +14,7 @@ from wifi import Cell, Scheme
 from mopidy import config, ext
 
 
-__version__ = '0.1.0'
+__version__ = '0.2.1'
 
 # TODO: If you need to log, use loggers named after the current Python module
 logger = logging.getLogger(__name__)
@@ -36,17 +37,16 @@ class Extension(ext.Extension):
         return schema
 
     def setup(self, registry):
-        registry.add(
-            'http:app', {'name': self.ext_name, 'factory': self.factory})
+        registry.add('http:app', {'name': self.ext_name, 'factory': self.factory})
 
     def factory(self, config, core):
         from tornado.web import StaticFileHandler
         path = os.path.join(os.path.dirname(__file__), 'static')
-        return [
-            (r'/wifi', WifiHandler),
+        return [(r'/wifi', WifiHandler),
             (r'/settings', SettingsHandler, {'core': core, 'config': config}),
-            (r'/(.*)', StaticFileHandler, {'path': path, 'default_filename': 'index.html'})
-        ]
+            (r'/restart', RestartHandler),
+            (r'/extensions', ExtensionsHandler),
+            (r'/(.*)', StaticFileHandler, {'path': path, 'default_filename': 'index.html'})]
 
 
 #
@@ -56,17 +56,18 @@ class WifiHandler(tornado.web.RequestHandler):
 
     def get(self):
         cells = Cell.all('wlan0')
-        items = [];
+        items = []
         for cell in cells:
             items.append(cell.__dict__)
 
         self.write(json.dumps(items))
 
 
- # 
- #This section is entirely lifted from the brilliant https://github.com/woutervanwijk/mopidy-websettings 
+ #
+ #This section is entirely lifted from the brilliant
+ #https://github.com/woutervanwijk/mopidy-websettings
  #updated to provide the settings as a RESTful json service
- #   
+ #
 class SettingsHandler(tornado.web.RequestHandler):
 
     def initialize(self, core, config):
@@ -102,19 +103,16 @@ class SettingsHandler(tornado.web.RequestHandler):
         self.write(response)
 
     def post(self):
-        error = ''
+        message = ''
         try:
             iniconfig = ConfigObj(self.config_file, configspec=spec_file, file_error=True, encoding='utf8')
         except (ConfigObjError, IOError), e:
-            error = 'Could not load ini file!'
-        if error == '':
+            message = 'Could not load ini file!'
+        if message == '':
             validItems = ConfigObj(spec_file, encoding='utf8')
-            templateVars = {
-                "error": error
-            }
             #iterate over the items, so that only valid items are processed
             for item in validItems:
-                for subitem in validItems[ item ]:
+                for subitem in validItems[item]:
                     itemName = item + '__' + subitem
                     argumentItem = self.get_argument(itemName, default='')
                     if argumentItem:
@@ -129,13 +127,45 @@ class SettingsHandler(tornado.web.RequestHandler):
                             iniconfig[item] = {}
                             iniconfig[item][subitem] = argumentItem
             iniconfig.write()
-        message = '<html><body><h1>' + error + '</h1><p>Applying changes (reboot) <br/><a href="/">Back</a><br/></p></body></html>'
-        self.write(message)
+            message = 'Settings saved, system going down now!'
 
-        #logger.info ("restart")
-        #restart_program()
+        self.write('{ "message": "' + message + '" }')
 
-        #using two different methods for reboot for different systems
-        logger.info('Rebooting system')
-        os.system("sudo shutdown -r now")
+        logger.info('Material webclient rebooting system')
         os.system("shutdown -r now")
+
+#
+#At least require a post to restart
+#
+class RestartHandler(tornado.web.RequestHandler):
+    def post(self):
+        self.write('{ "message": "System going down now!" }')
+        logger.info('Material webclient rebooting system')
+        os.system("shutdown -r now")
+
+class ExtensionsHandler(tornado.web.RequestHandler): 
+    def get(self):
+        outdated = self.get_argument('outdated', default='false')
+        packages = {}
+
+        if outdated == 'true':
+            installed = subprocess.check_output(['/usr/local/bin/pip', 'list', '-o'])
+            for itm in installed.split('\n'):
+                parts = itm.split(' ')
+                if len(parts) > 1:
+                    packages[parts[0]] = { 'current': parts[2], 'latest': parts[4] }
+        else:
+            installed = subprocess.check_output(['/usr/local/bin/pip', 'list'])
+            for itm in installed.split('\n'):
+                parts = itm.split(' ')
+                if len(parts) > 1:
+                    packages[parts[0]] = parts[1]
+
+        self.write(json.dumps(packages))
+
+    def post(self):
+        extension = self.get_argument('extension', default='')
+        if extension != '':
+            installed = subprocess.check_output(['/usr/local/bin/pip', 'install', extension, '--upgrade'])
+            self.write('{ "message": "Updates installed, system going down now!" }')
+            os.system("shutdown -r now")

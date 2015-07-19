@@ -1,5 +1,5 @@
 ﻿<md-list>
-    <md-subheader>Albums</md-subheader>
+    <md-subheader class="md-primary">Albums</md-subheader>
     <div layout="row" layout-align="center center" layout-padding ng-if="albumsLoading">
         <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
     </div>
@@ -10,7 +10,7 @@
             <p>{{ album.artists[0].name }}</p>
         </div>
     </md-list-item>
-    <md-subheader>Artists</md-subheader>
+    <md-subheader class="md-primary">Artists</md-subheader>
     <div layout="row" layout-align="center center" layout-padding ng-if="artistsLoading">
         <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
     </div>
@@ -18,7 +18,7 @@
         <md-icon>person</md-icon>
         <p>{{ artist.name }}</p>
     </md-list-item>
-    <md-subheader>Tracks</md-subheader>
+    <md-subheader class="md-primary">Tracks</md-subheader>
     <div layout="row" layout-align="center center" layout-padding ng-if="tracksLoading">
         <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
     </div>
@@ -28,5 +28,6 @@
             <h3>{{ track.name }}</h3>
             <p>{{ track.artists[0].name }}</p>
         </div>
+        <md-icon class="md-secondary" aria-label="More" ng-click="showTrackActions($event, track)">more_vert</md-icon>
     </md-list-item>
 </md-list>

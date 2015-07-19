@@ -10,19 +10,14 @@ Mopidy-Material-Webclient
     :target: https://pypi.python.org/pypi/Mopidy-Material-Webclient/
     :alt: Number of PyPI downloads
 
-.. image:: https://img.shields.io/travis/matgallacher/mopidy-material-webclient/master.svg?style=flat
-    :target: https://travis-ci.org/matgallacher/mopidy-material-webclient
-    :alt: Travis CI build status
-
-.. image:: https://img.shields.io/coveralls/matgallacher/mopidy-material-webclient/master.svg?style=flat
-   :target: https://coveralls.io/r/matgallacher/mopidy-material-webclient?branch=master
-   :alt: Test coverage
-
 A Mopidy web client with an Android Material design feel.
 
-This is a stripped down and slightly tarted up web front end for my own personal use and a few people I make retro radios into streaming music players for.  
+This is a stripped down and slightly tarted up web front end for my own personal use and a few people I make retro 
+radios into streaming music players for.  
 
-You won't see the wealth of settings that the brilliant `Mopidy Websettings <https://github.com/woutervanwijk/mopidy-websettings>`_ gives you because this was created for people with pre-installed systems who won't be making that level of change. Maybe I'll add in some meta settings to say which settings are accessible in a later update!
+You won't see the wealth of settings that the brilliant `Mopidy Websettings <https://github.com/woutervanwijk/mopidy-websettings>`_ 
+gives you because this was created for people with pre-installed systems who won't be making that level of change. Maybe I'll add in 
+some meta settings to say which settings are accessible in a later update!
 
 
 Installation
@@ -31,9 +26,6 @@ Installation
 Install by running::
 
     pip install Mopidy-Material-Webclient
-
-Or, if available, install the Debian/Ubuntu package from `apt.mopidy.com
-<http://apt.mopidy.com/>`_.
 
 
 Configuration
@@ -63,6 +55,19 @@ Thanks
 Changelog
 =========
 
+v0.2.1
+----------------------------------------
+
+- Added missing files to the pypi distribution
+
+v0.2.0
+----------------------------------------
+
+- Reworked searching from the library
+- Playing a track now inserts it into the current queue then plays it
+- Clear queue function
+- Lots of cleanup and linting of scripts
+
 v0.1.0
 ----------------------------------------
 
@@ -71,3 +76,4 @@ v0.1.0
 - About and restart don't work at all from the System menu
 - Search produces results but you can't do anything with them.  I'm not happy with any of the search mechanic at the moment - so expect to see that entirely revamped.
 - Playlist support is really basic, just saving the current queue as a new playlist
+
