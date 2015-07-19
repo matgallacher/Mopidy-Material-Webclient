@@ -1,9 +1,9 @@
 ﻿<html lang="en" ng-app="MopidyApp">
 <head>
-    <link href="bower_components/angular-material/angular-material.min.css" rel="stylesheet">
     <link href="//fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic" rel="stylesheet">
     <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/angular-material.min.css" rel="stylesheet">
     <link href="css/app.min.css" rel="stylesheet">
     <meta name="viewport" content="initial-scale=1">
     <title>Mopidy</title>
@@ -36,22 +36,12 @@
             </md-list>
         </md-sidenav>
         <div layout="column" flex id="content" style="position: relative">
-            <md-toolbar layout="column" class="md-whiteframe-z2 {{ toolbar.height }}">
+            <md-toolbar layout="column" class="md-whiteframe-z2">
                 <div class="md-toolbar-tools" layout="row">
-                    <md-button ng-click="toolbar.toggleSidenav('left')" hide-gt-lg class="md-icon-button">
+                    <md-button ng-click="toggleSidenav('left')" hide-gt-lg class="md-icon-button">
                         <md-icon>menu</md-icon>
                     </md-button>
                     <span flex>Mopidy</span>
-                    <md-button class="md-icon-button" ng-click="toolbar.toggleSearch()">
-                        <md-icon>search</md-icon>
-                    </md-button>
-                </div>
-                <div class="md-toolbar-tools" ng-if="toolbar.showSearch">
-                    <form name="searchForm" flex ng-submit="toolbar.doSearch()">
-                        <md-input-container flex md-no-float>
-                            <input id="search-text" type="text" placeholder="Search barcodes" ng-model="toolbar.searchText" ng-blur="toolbar.toggleSearch(true)" />
-                        </md-input-container>
-                    </form>
                 </div>
             </md-toolbar>
             <md-content layout="column" flex> 
@@ -71,15 +61,12 @@
             </md-toolbar>
         </div>
     </div>
-    <!-- Angular Material Dependencies -->
-    <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
-    <script src="bower_components/angular-aria/angular-aria.min.js"></script>
-    <script src="bower_components/angular-material/angular-material.min.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="/mopidy/mopidy.js"></script>
-    <script src="scripts/app.js"></script>
-    <script src="scripts/services.js"></script>
-    <script src="scripts/controllers.js"></script>
+    <script src="scripts/angular.min.js"></script>
+    <script src="scripts/angular-animate.min.js"></script>
+    <script src="scripts/angular-aria.min.js"></script>
+    <script src="scripts/angular-material.min.js"></script>
+    <script src="scripts/angular-route.min.js"></script>
+    <script src="scripts/app.min.js"></script>
 </body>
 </html>

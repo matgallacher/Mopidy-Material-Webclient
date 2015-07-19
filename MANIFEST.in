@@ -4,6 +4,8 @@ include LICENSE
 include MANIFEST.in
 include README.rst
 include mopidy_material_webclient/ext.conf
+include mopidy_material_webclient/settingsspec.ini
 include tox.ini
 
+recursive-include mopidy_material_webclient/static/*
 recursive-include tests *.py
