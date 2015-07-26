@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+﻿from __future__ import unicode_literals
 
 
 import logging
@@ -14,7 +14,7 @@ from wifi import Cell, Scheme
 from mopidy import config, ext
 
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 # TODO: If you need to log, use loggers named after the current Python module
 logger = logging.getLogger(__name__)
@@ -70,69 +70,34 @@ class WifiHandler(tornado.web.RequestHandler):
  #
 class SettingsHandler(tornado.web.RequestHandler):
 
-    def initialize(self, core, config):
-        self.config_file = config.get('websettings')['config_file']
-        self.core = core
+	def initialize(self, core, config):
+		self.config_file = config.get('material-webclient')['config_file']
+		self.core = core
 
-    def get(self):
-        error = ''
-        #read config file
-        try:
-            iniconfig = ConfigObj(self.config_file, configspec=spec_file, file_error=True, encoding='utf8')
-        except (ConfigObjError, IOError), e:
-            error = 'Could not load ini file! %s %s %s' % (e, ConfigObjError, IOError)
-        #read values of valid items (in the spec-file)
-        validItems = ConfigObj(spec_file, encoding='utf8')
-        templateVars = {
-            "error": error
-        }
-        #iterate over the valid items to get them into the template
-        for item in validItems:
-            for subitem in validItems[item]:
-                itemName = item + '__' + subitem
-                try:
-                    configValue = iniconfig[item][subitem]
-                    #compare last 8 caracters of subitemname
-                    if subitem[-8:] == 'password' and configValue != '':
-                        configValue = password_mask * len(iniconfig[item][subitem])
-                    templateVars[itemName] = configValue
-                except:
-                    pass
-        response = json.dumps(templateVars)
-        logger.info(response)
-        self.write(response)
+	def get(self):
+		validItems = ConfigObj(self.config_file, encoding='utf8')
+		self.write(validItems)
 
-    def post(self):
-        message = ''
-        try:
-            iniconfig = ConfigObj(self.config_file, configspec=spec_file, file_error=True, encoding='utf8')
-        except (ConfigObjError, IOError), e:
-            message = 'Could not load ini file!'
-        if message == '':
-            validItems = ConfigObj(spec_file, encoding='utf8')
-            #iterate over the items, so that only valid items are processed
-            for item in validItems:
-                for subitem in validItems[item]:
-                    itemName = item + '__' + subitem
-                    argumentItem = self.get_argument(itemName, default='')
-                    if argumentItem:
-                        #don't edit config value if password mask
-                        if subitem[-8:] == 'password':
-                          if argumentItem == (password_mask * len(argumentItem)) or argumentItem == '':
-                              continue
-                        #create section entry if it doesn't exist
-                        try:
-                            iniconfig[item][subitem] = argumentItem
-                        except:
-                            iniconfig[item] = {}
-                            iniconfig[item][subitem] = argumentItem
-            iniconfig.write()
-            message = 'Settings saved, system going down now!'
-
-        self.write('{ "message": "' + message + '" }')
-
-        logger.info('Material webclient rebooting system')
-        os.system("shutdown -r now")
+	def post(self):
+		logger.info('Reading data from post')
+		data = json.loads(self.request.body)
+		logger.info(data)
+		cfg = ConfigObj(self.config_file, encoding='utf8')
+		
+		if cfg['network']['hostname'] != data['network']['hostname']:
+            		os.system('sh hostname.sh {0}'.format(data['network']['hotname']))
+        
+        	if cfg['network']['wifi_network'] != data['network']['wifi_network']:
+            		os.system('sh wifi.sh "{0}" "{1}"'.format(data['network']['wifi_network'], data['network']['wifi_password']))
+        
+        	for itm in data:
+			for subitm in data[itm]:
+				cfg[itm][subitm] = data[itm][subitm]
+        
+        	cfg.write()
+        	self.write('{ "message": "Settings saved, system going down now!" }')
+        	logger.info('Material webclient rebooting system')
+        	os.system('reboot')
 
 #
 #At least require a post to restart
@@ -141,7 +106,7 @@ class RestartHandler(tornado.web.RequestHandler):
     def post(self):
         self.write('{ "message": "System going down now!" }')
         logger.info('Material webclient rebooting system')
-        os.system("shutdown -r now")
+        os.system('reboot')
 
 class ExtensionsHandler(tornado.web.RequestHandler): 
     def get(self):
@@ -168,4 +133,4 @@ class ExtensionsHandler(tornado.web.RequestHandler):
         if extension != '':
             installed = subprocess.check_output(['/usr/local/bin/pip', 'install', extension, '--upgrade'])
             self.write('{ "message": "Updates installed, system going down now!" }')
-            os.system("shutdown -r now")
+            os.system('reboot')

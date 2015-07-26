@@ -1,14 +1,14 @@
-﻿<html lang="en" ng-app="MopidyApp">
+﻿<html lang="en" ng-app="MopidyApp" ng-controller="AppCtrl">
 <head>
     <link href="//fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic" rel="stylesheet">
     <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/angular-material.min.css" rel="stylesheet">
-    <link href="css/app.min.css" rel="stylesheet">
+    <link href="/material-webclient/css/angular-material.min.css" rel="stylesheet">
+    <link href="/material-webclient/css/app.min.css" rel="stylesheet">
     <meta name="viewport" content="initial-scale=1">
-    <title>Mopidy</title>
+    <title>{{ host }}</title>
 </head>
-<body ng-controller="AppCtrl" ng-cloak layout="column">
+<body ng-cloak layout="column">
     <div layout="row" flex layout-fill>
         <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-lg')">
             <img src="images/audio_mix.jpg" class="img-responsive" />
@@ -41,10 +41,10 @@
                     <md-button ng-click="toggleSidenav('left')" hide-gt-lg class="md-icon-button">
                         <md-icon>menu</md-icon>
                     </md-button>
-                    <span flex>Mopidy</span>
+                    <span flex>{{ host }}</span>
                 </div>
             </md-toolbar>
-            <md-content layout="column" flex> 
+            <md-content layout="column" flex>
                 <div ng-view></div>
             </md-content>
             <md-toolbar layout="column" class="md-whiteframe-z4 md-accent" ng-if="nowPlaying && showNowPlaying">
@@ -62,11 +62,11 @@
         </div>
     </div>
     <script src="/mopidy/mopidy.js"></script>
-    <script src="scripts/angular.min.js"></script>
-    <script src="scripts/angular-animate.min.js"></script>
-    <script src="scripts/angular-aria.min.js"></script>
-    <script src="scripts/angular-material.min.js"></script>
-    <script src="scripts/angular-route.min.js"></script>
-    <script src="scripts/app.min.js"></script>
+    <script src="/material-webclient/scripts/angular.min.js"></script>
+    <script src="/material-webclient/scripts/angular-animate.min.js"></script>
+    <script src="/material-webclient/scripts/angular-aria.min.js"></script>
+    <script src="/material-webclient/scripts/angular-material.min.js"></script>
+    <script src="/material-webclient/scripts/angular-route.min.js"></script>
+    <script src="/material-webclient/scripts/app.min.js"></script>
 </body>
 </html>

@@ -3,6 +3,9 @@
 controllers.controller('AppCtrl', [
     '$scope', '$mdSidenav', '$mdDialog', '$mdToast', '$location', '$http', 'mopidy', 'lastfm',
     function ($scope, $mdSidenav, $mdDialog, $mdToast, $location, $http, mopidy, lastfm) {
+
+        $scope.host = $location.host();
+
         mopidy.then(function (m) {
             m.playback.getCurrentTrack()
                 .done(function (track) {
@@ -111,7 +114,7 @@ controllers.controller('AppCtrl', [
                         '      <md-list-item ng-click="action(\'about\')">' +
                         '        <md-icon class="md-accent">info</md-icon><p>About</p>' +
                         '      </md-list-item>' +
-                        '      <md-list-item ng-click="action(\'restart\')">' +
+                        '      <md-list-item ng-click="closeDialog()">' +
                         '        <md-icon>cancel</md-icon><p>Cancel</p>' +
                         '      </md-list-item>' +
                         '    </md-list>' +
@@ -122,7 +125,7 @@ controllers.controller('AppCtrl', [
                 if (response == 'about') {
                     $location.path('about');
                 } else if (response == 'restart') {
-                    $http.post('restart').success(function (response) {
+                    $http.post('/material-webclient/restart').success(function (response) {
                         $mdToast.show(
                             $mdToast.simple()
                             .content(response.message)
@@ -741,22 +744,28 @@ controllers.controller('SearchCtrl', [
 controllers.controller('SettingsCtrl', [
     '$scope', '$http', '$mdToast',
     function ($scope, $http, $mdToast) {
-        $http.get('settings').success(function (settings) {
+        $http.get('/material-webclient/settings').success(function (settings) {
             console.log(settings);
-            for (var key in settings) {
-                var value = settings[key];
-                if (value == 'true') {
-                    settings[key] = true;
+            for (var itm in settings) {
+                if (settings.hasOwnProperty(itm)) {
+                    var subitm = settings[itm];
+                    for (var key in subitm) {
+                        if (subitm.hasOwnProperty(key)) {
+                            if (subitm[key] === 'true') {
+                                subitm[key] = true;
+                            }
+                        }
+                    }
                 }
-                $scope.settings = settings;
-                $scope.wifi = $scope.wifi ? $scope.wifi : [];
             }
-            if ($scope.wifi.indexOf(settings.network__wifi_network) < 0) {
-                $scope.wifi.push(settings.network__wifi_network);
+            $scope.wifi = $scope.wifi ? $scope.wifi : [];
+            $scope.settings = settings;
+            if ($scope.wifi.indexOf(settings.network.wifi_network) < 0) {
+                $scope.wifi.push(settings.network.wifi_network);
             }
         });
 
-        $http.get('wifi').success(function (networks) {
+        $http.get('/material-webclient/wifi').success(function (networks) {
             $scope.wifi = $scope.wifi ? $scope.wifi : [];
             for (var i = 0; i < networks.length; i++) {
                 if ($scope.wifi.indexOf(networks[i].ssid) < 0) {
@@ -766,24 +775,28 @@ controllers.controller('SettingsCtrl', [
         });
 
         $scope.save = function () {
-            $http({
-                method: 'POST',
-                url: 'settings',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                transformRequest: function (obj) {
-                    var str = [];
-                    for (var p in obj)
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    return str.join("&");
-                },
-                data: $scope.settings
-            }).success(function (response) {
-                $mdToast.show(
-                    $mdToast.simple()
-                        .content(response.message)
-                        .hideDelay(3000)
-                );
-            });
+            var data = JSON.parse(JSON.stringify($scope.settings));
+            for (var itm in data) {
+                if (data.hasOwnProperty(itm)) {
+                    var subitm = data[itm];
+                    for (var key in subitm) {
+                        if (subitm.hasOwnProperty(key)) {
+                            if (typeof subitm[key] === 'boolean') {
+                                subitm[key] = 'true';
+                            }
+                        }
+                    }
+                }
+            }
+
+            $http.post('/material-webclient/settings', data)
+                .success(function (response) {
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .content(response.message)
+                            .hideDelay(3000)
+                    );
+                });
         };
     }
 ]);
@@ -793,11 +806,11 @@ controllers.controller('AboutCtrl', [
     function ($scope, $http, $mdToast) {
         $scope.loading = true;
 
-        $scope.refresh = function() {
-            $http.get('extensions?' + Date.now()).success(function(response) {
+        $scope.refresh = function () {
+            $http.get('/material-webclient/extensions?' + Date.now()).success(function (response) {
                 $scope.loading = false;
                 var extensions = {};
-                angular.forEach(response, function(value, key) {
+                angular.forEach(response, function (value, key) {
                     if (key.indexOf('Mopidy') >= 0) {
                         extensions[key] = { current: value };
                     }
@@ -810,7 +823,7 @@ controllers.controller('AboutCtrl', [
 
         $scope.checkForUpdates = function () {
             $scope.loading = true;
-            $http.get('extensions?outdated=true&' + Date.now()).success(function (response) {
+            $http.get('/material-webclient/extensions?outdated=true&' + Date.now()).success(function (response) {
                 var message = 'No updates found';
                 for (var itm in response) {
                     if ($scope.extensions[itm]) {
@@ -827,10 +840,10 @@ controllers.controller('AboutCtrl', [
             });
         };
 
-        $scope.update = function(name) {
+        $scope.update = function (name) {
             $http({
                 method: 'POST',
-                url: 'extensions',
+                url: '/material-webclient/extensions',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 data: 'extension=' + name
             }).success(function (response) {
