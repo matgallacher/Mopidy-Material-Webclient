@@ -10,11 +10,38 @@ services.factory('mopidy', ['$q',
                 mopidy.playback.getCurrentTlTrack()
                     .done(function (tltrack) {
                         mopidy.nowPlaying = tltrack;
+                        // TODO: Unsure how to get the current value from a promise, must inventigate
+                        updatePageTitle('playing', mopidy.nowPlaying);
                     });
 
                 mopidy.on('event:trackPlaybackStarted', function (e) {
                     mopidy.nowPlaying = e.tl_track.track;
+                    updatePageTitle('playing', mopidy.nowPlaying);
                 });
+
+                mopidy.on('event:playbackStateChanged', function (e) {
+                    updatePageTitle(e.new_state, mopidy.nowPlaying);
+                });
+
+                updatePageTitle = function(state, track) {
+                    if (typeof track.artists != 'undefined') {
+                        var artists = track.artists.map(
+                            function(artist){
+                                return artist.name;
+                            }).join(", ");
+                    }
+
+                    var title = '';
+                    if (state == 'playing') {
+                        title = '\u25B6 ' + track.name + ' - ' + artists + ' | Mopidy';
+                    } else if (state == 'paused') {
+                        title = '\u2016 ' + track.name + ' - ' + artists + ' | Mopidy';
+                    } else {
+                        title = 'Mopidy';
+                    }
+
+                    document.title = title;
+                };
 
                 mopidy.play = function (uri) {
                     mopidy.tracklist.index(mopidy.nowPlaying).then(function (position) {
@@ -25,7 +52,8 @@ services.factory('mopidy', ['$q',
                 };
             });
         });
-    }]);
+    }
+]);
 
 services.factory('lastfm', [
     '$q', '$http',
