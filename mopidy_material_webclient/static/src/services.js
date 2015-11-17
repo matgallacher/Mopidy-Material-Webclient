@@ -35,7 +35,7 @@ services.factory('mopidy', ['$q',
                     if (state == 'playing') {
                         title = '\u25B6 ' + track.name + ' - ' + artists + ' | Mopidy';
                     } else if (state == 'paused') {
-                        title = '\u2016 ' + track.name + ' - ' + artists + ' | Mopidy';
+                        title = '\u2759\u2759 ' + track.name + ' - ' + artists + ' | Mopidy';
                     } else {
                         title = 'Mopidy';
                     }
