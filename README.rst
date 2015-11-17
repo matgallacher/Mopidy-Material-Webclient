@@ -25,14 +25,16 @@ Installation
 
 Install by running::
 
+    pip install configobj
+    
     pip install Mopidy-Material-Webclient
 
+NOTE: The current pip package does not include a dependency on configobj and needs to be installed separately
 
 Configuration
 =============
 
-Before starting Mopidy, you must add configuration for
-Mopidy-Material-Webclient to your Mopidy configuration file::
+Before starting Mopidy, you must add configuration for Mopidy-Material-Webclient to your Mopidy configuration file::
 
     [material-webclient]
 	enabled = true
