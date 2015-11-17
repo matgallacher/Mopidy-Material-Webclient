@@ -558,6 +558,10 @@ controllers.controller('QueueCtrl', [
             $scope.mopidy.tracklist.clear();
         };
 
+        $scope.setConsume = function () {
+            $scope.mopidy.tracklist.setConsume(true).then();
+        };
+
         $scope.save = function ($event) {
             $mdDialog.show({
                 targetEvent: $event,
