@@ -50,8 +50,8 @@
                     <md-icon>fast_rewind</md-icon>
                 </md-button>
                 <md-button class="md-primary md-icon-button" ng-click="play()">
-                    <md-icon class="md-accent" ng-if="state == 'playing'">play_arrow</md-icon>
-                    <md-icon class="md-accent" ng-if="state != 'playing'">pause</md-icon>
+                    <md-icon class="md-accent" ng-if="state != 'playing'">play_arrow</md-icon>
+                    <md-icon class="md-accent" ng-if="state == 'playing'">pause</md-icon>
                 </md-button>
                 <md-button class="md-primary md-icon-button" ng-click="next()">
                     <md-icon>fast_forward</md-icon>
@@ -61,8 +61,8 @@
     </div>
     <md-list flex>
         <md-list-item class="md-3-line" ng-repeat="t in tracks track by t.tlid" ng-click="play(t)">
-            <md-icon class="md-accent" ng-if="t.tlid == playing.tlid && state == 'playing'">play_arrow</md-icon>
-            <md-icon class="md-accent" ng-if="t.tlid == playing.tlid && state != 'playing'">pause</md-icon>
+            <md-icon class="md-accent" ng-if="t.tlid == playing.tlid && state != 'playing'">play_arrow</md-icon>
+            <md-icon class="md-accent" ng-if="t.tlid == playing.tlid && state == 'playing'">pause</md-icon>
             <div class="md-list-item-text" ng-class="{'md-offset': (t.tlid != playing.tlid) }">
                 <h3>{{ t.track.name }}</h3>
                 <h4>{{ t.track.artists[0].name }}</h4>
