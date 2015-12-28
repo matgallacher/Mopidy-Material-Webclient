@@ -1,4 +1,4 @@
-﻿<div layout="row" layout-align="center center" ng-if="!tracks" layout-padding>
+<div layout="row" layout-align="center center" ng-if="!tracks" layout-padding>
     <md-progress-circular class="md-primary" md-mode="indeterminate"></md-progress-circular>
 </div>
 <div ng-if="tracks.length == 0" layout-padding>
@@ -49,9 +49,11 @@
                 <md-button class="md-primary md-icon-button" ng-click="previous()">
                     <md-icon>fast_rewind</md-icon>
                 </md-button>
-                <md-button class="md-primary md-icon-button" ng-click="play()">
-                    <md-icon class="md-accent" ng-if="state == 'playing'">play_arrow</md-icon>
-                    <md-icon class="md-accent" ng-if="state != 'playing'">pause</md-icon>
+                <md-button class="md-icon-button" ng-if="state != 'playing'" ng-click="play()">
+                    <md-icon>play_arrow</md-icon>
+                </md-button>
+                <md-button class="md-icon-button" ng-if="state == 'playing'" ng-click="pause()">
+                    <md-icon>pause</md-icon>
                 </md-button>
                 <md-button class="md-primary md-icon-button" ng-click="next()">
                     <md-icon>fast_forward</md-icon>
