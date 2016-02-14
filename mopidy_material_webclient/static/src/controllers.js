@@ -3,6 +3,8 @@
 controllers.controller('AppCtrl', [
     '$scope', '$mdSidenav', '$mdDialog', '$mdToast', '$location', '$http', 'mopidy', 'lastfm', 'settings',
     function ($scope, $mdSidenav, $mdDialog, $mdToast, $location, $http, mopidy, lastfm, settings) {
+        // Start now playing off as hidden. We'll show it once we have a queue
+        $scope.showNowPlaying = false;
 
         settings.get().then(function(settings) {
             $scope.settings = settings['material-webclient'];
@@ -30,7 +32,19 @@ controllers.controller('AppCtrl', [
                     });
                 });
 
+            m.tracklist.getLength().then(function(length) {
+                if(length > 0) {
+                    $scope.showNowPlaying = true;
+                }
+            })
+
             m.on(console.log.bind(console));
+
+            m.on('event:tracklistChanged', function(e) {
+                m.tracklist.getLength().then(function(length) {
+                    $scope.showNowPlaying = (length > 0);
+                })
+            });
 
             m.on('event:playbackStateChanged', function (e) {
                 $scope.$apply(function () {
@@ -56,14 +70,6 @@ controllers.controller('AppCtrl', [
             $scope.pause = function () {
                 m.playback.pause();
             };
-
-            $scope.$on('$routeChangeSuccess', function () {
-                $scope.showNowPlaying = true;
-            });
-
-            $scope.$on('showNowPlayingChanged', function (e, args) {
-                $scope.showNowPlaying = args;
-            });
         });
 
         $scope.getInfo = function (track) {
@@ -87,8 +93,6 @@ controllers.controller('AppCtrl', [
                 }
             });
         };
-
-        $scope.showNowPlaying = true;
 
         $scope.goTo = function (path) {
             $location.path(path);
@@ -498,8 +502,6 @@ controllers.controller('QueueCtrl', [
                     $scope.getInfo($scope.nowPlaying);
                 });
             });
-
-            $scope.$emit('showNowPlayingChanged', false);
         });
 
         $scope.getInfo = function (track) {
