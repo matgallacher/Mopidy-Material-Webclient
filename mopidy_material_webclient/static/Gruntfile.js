@@ -29,7 +29,9 @@ module.exports = function (grunt) {
         },
         uglify: {
             options: {
-                mangle: false
+                mangle: false,
+                sourceMapIncludeSources: true,
+                sourceMap: true
             },
             scripts: {
                 files: {
@@ -38,7 +40,7 @@ module.exports = function (grunt) {
             }
         },
         less: {
-            'css/app.min.css': 'src/app.less'    
+            'css/app.min.css': 'src/app.less'
         },
         jshint: {
             all: ['gruntfile.js', 'src/*.js']

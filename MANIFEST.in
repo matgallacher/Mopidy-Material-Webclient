@@ -6,7 +6,14 @@ include README.rst
 include mopidy_material_webclient/ext.conf
 include mopidy_material_webclient/wifi.sh
 include mopidy_material_webclient/hostname.sh
+include mopidy_material_webclient/static/index.html
+include mopidy_material_webclient/static/favicon.ico
 include tox.ini
 
-recursive-include mopidy_material_webclient/static/*
+recursive-include mopidy_material_webclient/static/css *
+recursive-include mopidy_material_webclient/static/images *
+recursive-include mopidy_material_webclient/static/partials *
+recursive-include mopidy_material_webclient/static/scripts *
 recursive-include tests *.py
+
+prune *.vs
