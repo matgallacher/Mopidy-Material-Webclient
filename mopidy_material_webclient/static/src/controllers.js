@@ -1,10 +1,18 @@
 ﻿var controllers = angular.module('mopControllers', []);
 
 controllers.controller('AppCtrl', [
-    '$scope', '$mdSidenav', '$mdDialog', '$mdToast', '$location', '$http', 'mopidy', 'lastfm',
-    function ($scope, $mdSidenav, $mdDialog, $mdToast, $location, $http, mopidy, lastfm) {
+    '$scope', '$mdSidenav', '$mdDialog', '$mdToast', '$location', '$http', 'mopidy', 'lastfm', 'settings',
+    function ($scope, $mdSidenav, $mdDialog, $mdToast, $location, $http, mopidy, lastfm, settings) {
 
-        $scope.host = $location.host();
+        settings.get().then(function(settings) {
+            $scope.settings = settings['material-webclient'];
+
+            if($scope.settings.title) {
+                $scope.title = $scope.settings.title;
+            } else {
+                $scope.title = $location.host();
+            }
+        });
 
         mopidy.then(function (m) {
             m.playback.getCurrentTrack()
@@ -746,22 +754,9 @@ controllers.controller('SearchCtrl', [
 ]);
 
 controllers.controller('SettingsCtrl', [
-    '$scope', '$http', '$mdToast',
-    function ($scope, $http, $mdToast) {
-        $http.get('/material-webclient/settings').success(function (settings) {
-            console.log(settings);
-            for (var itm in settings) {
-                if (settings.hasOwnProperty(itm)) {
-                    var subitm = settings[itm];
-                    for (var key in subitm) {
-                        if (subitm.hasOwnProperty(key)) {
-                            if (subitm[key] === 'true') {
-                                subitm[key] = true;
-                            }
-                        }
-                    }
-                }
-            }
+    '$scope', '$http', '$mdToast', 'settings',
+    function ($scope, $http, $mdToast, settings) {
+        settings.get().then(function (settings) {
             $scope.wifi = $scope.wifi ? $scope.wifi : [];
             $scope.settings = settings;
             if ($scope.wifi.indexOf(settings.network.wifi_network) < 0) {
@@ -780,27 +775,13 @@ controllers.controller('SettingsCtrl', [
 
         $scope.save = function () {
             var data = JSON.parse(JSON.stringify($scope.settings));
-            for (var itm in data) {
-                if (data.hasOwnProperty(itm)) {
-                    var subitm = data[itm];
-                    for (var key in subitm) {
-                        if (subitm.hasOwnProperty(key)) {
-                            if (typeof subitm[key] === 'boolean') {
-                                subitm[key] = 'true';
-                            }
-                        }
-                    }
-                }
-            }
-
-            $http.post('/material-webclient/settings', data)
-                .success(function (response) {
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .content(response.message)
-                            .hideDelay(3000)
-                    );
-                });
+            settings.save(data).then(function() {
+                $mdToast.show(
+                    $mdToast.simple()
+                        .content(response.message)
+                        .hideDelay(3000)
+                );
+            });
         };
     }
 ]);

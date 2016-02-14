@@ -8,12 +8,12 @@
     <link href="/material-webclient/css/app.min.css" rel="stylesheet">
     <meta name="viewport" content="initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>{{ host }}</title>
+    <title ng-bind="title"></title>
 </head>
 <body ng-cloak layout="column">
     <div layout="row" flex layout-fill>
         <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-lg')">
-            <img src="images/audio_mix.jpg" class="img-responsive" />
+            <img src="images/audio_mix.jpg" class="img-responsive" style="height: 10em;"/>
             <md-list>
                 <md-list-item ng-click="goTo('/queue')">
                     <md-icon>queue</md-icon>
@@ -27,11 +27,11 @@
                     <md-icon>queue_music</md-icon>
                     <p>Playlists</p>
                 </md-list-item>
-                <md-list-item ng-click="goTo('/settings')">
+                <md-list-item ng-click="goTo('/settings')" ng-if="settings && settings.system_settings !== 'disabled'">
                     <md-icon>settings</md-icon>
                     <p>Settings</p>
                 </md-list-item>
-                <md-list-item ng-click="system($event)">
+                <md-list-item ng-click="system($event)" ng-if="settings && settings.power_control !== 'disabled'">
                     <md-icon>power_settings_new</md-icon>
                     <p>System</p>
                 </md-list-item>
@@ -43,7 +43,7 @@
                     <md-button ng-click="toggleSidenav('left')" hide-gt-lg class="md-icon-button">
                         <md-icon>menu</md-icon>
                     </md-button>
-                    <span flex>{{ host }}</span>
+                    <span flex>{{ title }}</span>
                 </div>
             </md-toolbar>
             <md-content layout="column" flex>

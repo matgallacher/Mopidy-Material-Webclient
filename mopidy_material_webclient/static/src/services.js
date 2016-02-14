@@ -82,3 +82,67 @@ services.factory('lastfm', [
         return lastfm;
     }
 ]);
+
+services.factory('settings', [
+    '$q', '$http',
+    function($q, $http) {
+        var settings = null;
+
+        var service = {
+            get: function() {
+                var deferred = $q.defer();
+
+                if(settings) {
+                    deferred.resolve(settings);
+                }
+
+                $http.get('/material-webclient/settings').success(function (settings) {
+                    for (var itm in settings) {
+                        if (settings.hasOwnProperty(itm)) {
+                            var subitm = settings[itm];
+                            for (var key in subitm) {
+                                if (subitm.hasOwnProperty(key)) {
+                                    if (subitm[key] === 'true') {
+                                        subitm[key] = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    deferred.resolve(settings);
+                });
+
+                return deferred.promise;
+            },
+
+            save: function(data) {
+                var deferred = $q.defer();
+
+                for (var itm in data) {
+                    if (data.hasOwnProperty(itm)) {
+                        var subitm = data[itm];
+                        for (var key in subitm) {
+                            if (subitm.hasOwnProperty(key)) {
+                                if (typeof subitm[key] === 'boolean') {
+                                    subitm[key] = 'true';
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $http.post('/material-webclient/settings', data)
+                    .success(function (response) {
+                        settings = data;
+
+                        $q.resolve();
+                    });
+
+                return deferred.promise;
+            }
+        }
+
+        return service;
+    }
+]);
