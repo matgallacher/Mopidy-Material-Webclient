@@ -1,19 +1,18 @@
 ﻿var controllers = angular.module('mopControllers', []);
 
 controllers.controller('AppCtrl', [
-    '$scope', '$mdSidenav', '$mdDialog', '$mdToast', '$location', '$http', 'mopidy', 'lastfm', 'settings',
-    function ($scope, $mdSidenav, $mdDialog, $mdToast, $location, $http, mopidy, lastfm, settings) {
+    '$scope', '$mdSidenav', '$mdDialog', '$mdToast', '$location', '$timeout', '$http', 'mopidy', 'lastfm', 'settings',
+    function ($scope, $mdSidenav, $mdDialog, $mdToast, $location, $timeout, $http, mopidy, lastfm, settings) {
         // Start now playing off as hidden. We'll show it once we have a queue
         $scope.showNowPlaying = false;
+        $scope.volume = {
+            value: 0,
+            bypass: true,
+            timer: null
+        };
 
         settings.get().then(function(settings) {
             $scope.settings = settings['material-webclient'];
-
-            if($scope.settings.title) {
-                $scope.title = $scope.settings.title;
-            } else {
-                $scope.title = $location.host();
-            }
         });
 
         mopidy.then(function (m) {
@@ -36,7 +35,21 @@ controllers.controller('AppCtrl', [
                 if(length > 0) {
                     $scope.showNowPlaying = true;
                 }
-            })
+            });
+
+            m.playback.getMute().then(function(mute) {
+                if(mute) {
+                    $scope.volume.value = 0;
+                } else {
+                    m.playback.getVolume().then(function(volume) {
+                        $scope.volume.value = volume;
+
+                        setTimeout(function() {
+                            $scope.volume.bypass = false;
+                        });
+                    });
+                }
+            });
 
             m.on(console.log.bind(console));
 
@@ -57,6 +70,44 @@ controllers.controller('AppCtrl', [
                     $scope.nowPlaying = e.tl_track.track;
                     $scope.getInfo($scope.nowPlaying);
                 });
+            });
+
+            m.on('event:volumeChanged', function(e) {
+                $scope.$apply(function() {
+                    $scope.volume.bypass = true;
+                    $scope.volume.value = e.volume;
+
+                    setTimeout(function() {
+                        $scope.volume.bypass = false;
+                    }, 0);
+                })
+            });
+
+            m.on('event:muteChanged', function(e) {
+                $scope.$apply(function() {
+                    $scope.volume.bypass = true;
+                    if(e.mute) {
+                        $scope.volume.value = 0;
+                    } else {
+                        m.playback.getVolume().then(function(data) {
+                            $scope.volume.value = data.volume;
+
+                            setTimeout(function() {
+                                $scope.volume.bypass = false;
+                            }, 0);
+                        });
+                    }
+                });
+            });
+
+            $scope.$watch('volume.value', function(oldValue, newValue) {
+                if(newValue && !$scope.volume.bypass) {
+                    $timeout.cancel($scope.volume.timer);
+                    $scope.volume.timer = $timeout(function() {
+                        m.playback.setVolume(newValue);
+                        m.playback.setMute(false);
+                    }, 100);
+                }
             });
 
             m.errback = function (e) {
@@ -377,9 +428,10 @@ controllers.controller('PlaylistsCtrl', [
                             m.library.getImages(uris).done(function (images) {
                                 $scope.$apply(function () {
                                     $scope.images = [];
-                                    for (var i = 0; i < uris.length; i++) {
-                                        if (images[uris[i]] && images[uris[i]].length > 0) {
-                                            $scope.images.push(images[uris[i]][0].uri);
+                                    for(var i in images) {
+                                        if(images.hasOwnProperty(i) && images[i].length > 0 &&
+                                            !_.includes($scope.images, images[i][0].uri)) {
+                                                $scope.images.push(images[i][0].uri);
                                         }
                                     }
                                 });

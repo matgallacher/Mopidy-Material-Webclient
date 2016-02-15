@@ -4,19 +4,21 @@
 <div layout="column" layout-gt-md="row" ng-if="content">
     <div flex-gt-md="33" ng-if="playlist">
         <md-card>
-            <div layout="row" layout-padding layout-wrap flex>
-                <div ng-repeat="image in images" flex="33">
-                    <img ng-src="{{ image }}" class="img-responsive" />
+            <md-card-content layout="column">
+                <div layout="row" layout-padding layout-wrap>
+                    <div ng-repeat="image in images" flex="33">
+                        <img ng-src="{{ image }}" class="img-responsive" />
+                    </div>
                 </div>
-            </div>
-            <md-card-content>
-                <h2 class="md-title">{{ playlist.name }}</h2>
+                <md-card-actions layout="row">
+                    <div layout-fill>
+                        <h2 class="md-title" layout-fill>{{ playlist.name }}</h2>
+                    </div>
+                    <md-button class="md-icon-button md-primary" ng-click="playAll()">
+                        <md-icon>play_arrow</md-icon>
+                    </md-button>
+                </md-card-actions>
             </md-card-content>
-            <div class="md-actions" layout="row" layout-align="end center">
-                <md-button class="md-icon-button md-primary" ng-click="playAll()">
-                    <md-icon>play_arrow</md-icon>
-                </md-button>
-            </div>
         </md-card>
     </div>
     <md-list flex>
@@ -27,4 +29,3 @@
         </md-list-item>
     </md-list>
 </div>
-

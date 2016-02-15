@@ -36,6 +36,11 @@
                     <p>System</p>
                 </md-list-item>
             </md-list>
+            <md-card>
+                <md-card-content>
+                    <md-slider min="0" max="100" ng-model="volume.value" aria-label="volume"></md-slider>
+                </md-card-content>
+            </md-card>
         </md-sidenav>
         <div layout="column" id="content" layout-fill>
             <md-toolbar layout="column" class="md-whiteframe-z2">
@@ -43,7 +48,7 @@
                     <md-button ng-click="toggleSidenav('left')" hide-gt-lg class="md-icon-button">
                         <md-icon>menu</md-icon>
                     </md-button>
-                    <span flex>{{ title }}</span>
+                    <span flex>{{ heading }}</span>
                 </div>
             </md-toolbar>
             <md-content layout="column" flex>
@@ -69,6 +74,7 @@
     <script src="/material-webclient/scripts/angular-aria.min.js"></script>
     <script src="/material-webclient/scripts/angular-material.min.js"></script>
     <script src="/material-webclient/scripts/angular-route.min.js"></script>
+    <script src="/material-webclient/scripts/lodash.min.js"></script>
     <script src="/material-webclient/scripts/app.min.js"></script>
 </body>
 </html>
