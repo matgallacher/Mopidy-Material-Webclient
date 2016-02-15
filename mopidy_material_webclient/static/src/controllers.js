@@ -1,10 +1,19 @@
 ﻿var controllers = angular.module('mopControllers', []);
 
 controllers.controller('AppCtrl', [
-    '$scope', '$mdSidenav', '$mdDialog', '$mdToast', '$location', '$http', 'mopidy', 'lastfm',
-    function ($scope, $mdSidenav, $mdDialog, $mdToast, $location, $http, mopidy, lastfm) {
+    '$scope', '$mdSidenav', '$mdDialog', '$mdToast', '$location', '$timeout', '$http', 'mopidy', 'lastfm', 'settings',
+    function ($scope, $mdSidenav, $mdDialog, $mdToast, $location, $timeout, $http, mopidy, lastfm, settings) {
+        // Start now playing off as hidden. We'll show it once we have a queue
+        $scope.showNowPlaying = false;
+        $scope.volume = {
+            value: 0,
+            bypass: true,
+            timer: null
+        };
 
-        $scope.host = $location.host();
+        settings.get().then(function(settings) {
+            $scope.settings = settings['material-webclient'];
+        });
 
         mopidy.then(function (m) {
             m.playback.getCurrentTrack()
@@ -22,7 +31,33 @@ controllers.controller('AppCtrl', [
                     });
                 });
 
+            m.tracklist.getLength().then(function(length) {
+                if(length > 0) {
+                    $scope.showNowPlaying = true;
+                }
+            });
+
+            m.playback.getMute().then(function(mute) {
+                if(mute) {
+                    $scope.volume.value = 0;
+                } else {
+                    m.playback.getVolume().then(function(volume) {
+                        $scope.volume.value = volume;
+
+                        setTimeout(function() {
+                            $scope.volume.bypass = false;
+                        });
+                    });
+                }
+            });
+
             m.on(console.log.bind(console));
+
+            m.on('event:tracklistChanged', function(e) {
+                m.tracklist.getLength().then(function(length) {
+                    $scope.showNowPlaying = (length > 0);
+                })
+            });
 
             m.on('event:playbackStateChanged', function (e) {
                 $scope.$apply(function () {
@@ -37,6 +72,44 @@ controllers.controller('AppCtrl', [
                 });
             });
 
+            m.on('event:volumeChanged', function(e) {
+                $scope.$apply(function() {
+                    $scope.volume.bypass = true;
+                    $scope.volume.value = e.volume;
+
+                    setTimeout(function() {
+                        $scope.volume.bypass = false;
+                    }, 0);
+                })
+            });
+
+            m.on('event:muteChanged', function(e) {
+                $scope.$apply(function() {
+                    $scope.volume.bypass = true;
+                    if(e.mute) {
+                        $scope.volume.value = 0;
+                    } else {
+                        m.playback.getVolume().then(function(data) {
+                            $scope.volume.value = data.volume;
+
+                            setTimeout(function() {
+                                $scope.volume.bypass = false;
+                            }, 0);
+                        });
+                    }
+                });
+            });
+
+            $scope.$watch('volume.value', function(oldValue, newValue) {
+                if(newValue && !$scope.volume.bypass) {
+                    $timeout.cancel($scope.volume.timer);
+                    $scope.volume.timer = $timeout(function() {
+                        m.playback.setVolume(newValue);
+                        m.playback.setMute(false);
+                    }, 100);
+                }
+            });
+
             m.errback = function (e) {
                 console.log(e);
             };
@@ -48,14 +121,6 @@ controllers.controller('AppCtrl', [
             $scope.pause = function () {
                 m.playback.pause();
             };
-
-            $scope.$on('$routeChangeSuccess', function () {
-                $scope.showNowPlaying = true;
-            });
-
-            $scope.$on('showNowPlayingChanged', function (e, args) {
-                $scope.showNowPlaying = args;
-            });
         });
 
         $scope.getInfo = function (track) {
@@ -79,8 +144,6 @@ controllers.controller('AppCtrl', [
                 }
             });
         };
-
-        $scope.showNowPlaying = true;
 
         $scope.goTo = function (path) {
             $location.path(path);
@@ -365,9 +428,10 @@ controllers.controller('PlaylistsCtrl', [
                             m.library.getImages(uris).done(function (images) {
                                 $scope.$apply(function () {
                                     $scope.images = [];
-                                    for (var i = 0; i < uris.length; i++) {
-                                        if (images[uris[i]] && images[uris[i]].length > 0) {
-                                            $scope.images.push(images[uris[i]][0].uri);
+                                    for(var i in images) {
+                                        if(images.hasOwnProperty(i) && images[i].length > 0 &&
+                                            !_.includes($scope.images, images[i][0].uri)) {
+                                                $scope.images.push(images[i][0].uri);
                                         }
                                     }
                                 });
@@ -490,8 +554,6 @@ controllers.controller('QueueCtrl', [
                     $scope.getInfo($scope.nowPlaying);
                 });
             });
-
-            $scope.$emit('showNowPlayingChanged', false);
         });
 
         $scope.getInfo = function (track) {
@@ -746,22 +808,9 @@ controllers.controller('SearchCtrl', [
 ]);
 
 controllers.controller('SettingsCtrl', [
-    '$scope', '$http', '$mdToast',
-    function ($scope, $http, $mdToast) {
-        $http.get('/material-webclient/settings').success(function (settings) {
-            console.log(settings);
-            for (var itm in settings) {
-                if (settings.hasOwnProperty(itm)) {
-                    var subitm = settings[itm];
-                    for (var key in subitm) {
-                        if (subitm.hasOwnProperty(key)) {
-                            if (subitm[key] === 'true') {
-                                subitm[key] = true;
-                            }
-                        }
-                    }
-                }
-            }
+    '$scope', '$http', '$mdToast', 'settings',
+    function ($scope, $http, $mdToast, settings) {
+        settings.get().then(function (settings) {
             $scope.wifi = $scope.wifi ? $scope.wifi : [];
             $scope.settings = settings;
             if ($scope.wifi.indexOf(settings.network.wifi_network) < 0) {
@@ -780,27 +829,13 @@ controllers.controller('SettingsCtrl', [
 
         $scope.save = function () {
             var data = JSON.parse(JSON.stringify($scope.settings));
-            for (var itm in data) {
-                if (data.hasOwnProperty(itm)) {
-                    var subitm = data[itm];
-                    for (var key in subitm) {
-                        if (subitm.hasOwnProperty(key)) {
-                            if (typeof subitm[key] === 'boolean') {
-                                subitm[key] = 'true';
-                            }
-                        }
-                    }
-                }
-            }
-
-            $http.post('/material-webclient/settings', data)
-                .success(function (response) {
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .content(response.message)
-                            .hideDelay(3000)
-                    );
-                });
+            settings.save(data).then(function() {
+                $mdToast.show(
+                    $mdToast.simple()
+                        .content(response.message)
+                        .hideDelay(3000)
+                );
+            });
         };
     }
 ]);
